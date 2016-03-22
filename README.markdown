@@ -12,7 +12,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/aykevl/mountinfo"
+	"github.com/aykevl/osfs"
 )
 
 func main() {
@@ -26,7 +26,7 @@ func main() {
 
 	// Ignoring the error is valid and will not crash your program.
 	// But you can, for example, print a warning that something went wrong.
-	info, _ := mountinfo.Read()
+	info, _ := osfs.Read()
 	mount := info.Get(path, st)
 
 	if mount != nil {
@@ -42,7 +42,7 @@ func main() {
 ```
 
 Documentation:
-[![GoDoc](https://godoc.org/github.com/aykevl/mountinfo?status.svg)](https://godoc.org/github.com/aykevl/mountinfo)
+[![GoDoc](https://godoc.org/github.com/aykevl/osfs?status.svg)](https://godoc.org/github.com/aykevl/osfs)
 
 The package is designed to be easy to use and resilient to unknown systems. It
 does what looks like the best possible action.
