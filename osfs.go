@@ -3,9 +3,6 @@
 // license that can be found in the LICENSE.txt file.
 
 // Package osfs determines filesystem capabilities based on os.FileInfo.
-// On Linux, it parses /proc/self/mountinfo. Then it can find the mount point
-// based on the st_dev field of the stat result (os.FileInfo.Sys()), and
-// determine filesystem capabilities from the filesystem type.
 package osfs
 
 import (
@@ -91,7 +88,7 @@ func parseUint64(s string) uint64 {
 // Filesystem returns capabilities of the filesystem for this mount point. The
 // results are more like an educated guess, but should give correct results for
 // the vast majority of detected filesystems. It has a reasonable default (e.g.
-// a standard POSIX filesystem with hardlinks and inodes).
+// on Linux a standard POSIX filesystem with hardlinks and inodes).
 func (p *MountPoint) Filesystem() Filesystem {
 	fs := defaultFilesystem()
 	if p == nil {

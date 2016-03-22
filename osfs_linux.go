@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE.txt file.
 
+// On Linux, it parses /proc/self/mountinfo. Then it can find the mount point
+// based on the st_dev field of the stat result (os.FileInfo.Sys()), and
+// determine filesystem capabilities from the filesystem type.
 package osfs
 
 import (
@@ -14,7 +17,7 @@ import (
 	"syscall"
 )
 
-// MOUNTINFO_PATH is the common path for the mountinfo file.
+// MOUNTINFO_PATH is the common path for the mountinfo file on Linux.
 const MOUNTINFO_PATH = "/proc/self/mountinfo"
 
 // From the kernel docs at
