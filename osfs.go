@@ -18,7 +18,7 @@ var Default = defaultFilesystem()
 // Filesystem contains capabilities of one filesystem. The zero value means it
 // has no special features (and is not a typical POSIX filesystem).
 type Filesystem struct {
-	Permissions int // supported permissions are set (e.g. 0777 on Linux)
+	Permissions os.FileMode // supported permissions are set (e.g. 0777 on Linux)
 	Symlink     bool
 	Hardlink    bool
 	Inode       bool
