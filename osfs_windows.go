@@ -21,6 +21,6 @@ func Read() (*Info, error) {
 	return &Info{}, errUnsupported
 }
 
-func (info *Info) Get(path string, fi os.FileInfo) *MountPoint {
+func (info *Info) GetReal(path string, fi os.FileInfo) *MountPoint {
 	return nil
 }

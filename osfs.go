@@ -55,6 +55,16 @@ func (info *Info) Len() int {
 // GetPath returns the mount point based on a path. It does a os.Stat and
 // Info.Get on the file. It is a shorthand for Get(path, stat).
 func (info *Info) GetPath(path string) (*MountPoint, error) {
+	st, err := os.Stat(path)
+	if err != nil {
+		return nil, err
+	}
+	return info.Get(path, st)
+}
+
+// Get returns the mount point based on a path and stat result. The path does
+// not have to be absolute and may contain symlinks.
+func (info *Info) Get(path string, fileInfo os.FileInfo) (*MountPoint, error) {
 	path, err := filepath.Abs(path)
 	if err != nil {
 		return nil, err
@@ -63,11 +73,7 @@ func (info *Info) GetPath(path string) (*MountPoint, error) {
 	if err != nil {
 		return nil, err
 	}
-	st, err := os.Stat(path)
-	if err != nil {
-		return nil, err
-	}
-	return info.Get(path, st), nil
+	return info.GetReal(path, fileInfo), nil
 }
 
 // parseInt returns the positive parsed number if parsing succeeded, or 0 if it

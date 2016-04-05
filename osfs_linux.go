@@ -176,11 +176,11 @@ func mountParse(in string) (string, bool) {
 // MountPoint returns the mountpoint associated with the FileInfo, or nil if the
 // mount point wasn't found. When nil is returned, you can still safely call
 // Filesystem() on the returned pointer (it will return the default filesystem).
-// Calling Get() on a nil *Info is not allowed.
+// Calling GetReal() on a nil *Info is not allowed.
 //
 // The filePath must be absolute (pass filepath.IsAbs), otherwise this function
 // will panic. If you aren't sure that the path is absolute, use filepath.Abs().
-func (info *Info) Get(filePath string, fileInfo os.FileInfo) *MountPoint {
+func (info *Info) GetReal(filePath string, fileInfo os.FileInfo) *MountPoint {
 	if !filepath.IsAbs(filePath) {
 		panic("path must be absolute")
 	}
