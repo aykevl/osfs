@@ -15,6 +15,8 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
+
+	"golang.org/x/sys/unix"
 )
 
 // MOUNTINFO_PATH is the common path for the mountinfo file on Linux.
@@ -185,33 +187,39 @@ func (info *Info) GetReal(filePath string, fileInfo os.FileInfo) *MountPoint {
 		panic("path must be absolute")
 	}
 
+	// Find the st_dev value.
+	var deviceId uint64
+	switch sys := fileInfo.Sys().(type) {
+	case *syscall.Stat_t:
+		deviceId = sys.Dev
+	case *unix.Stat_t:
+		deviceId = sys.Dev
+	default:
+		return nil
+	}
+
 	// See:
 	//  * https://criu.org/Filesystems_pecularities
 	//  * https://bugzilla.redhat.com/show_bug.cgi?id=711881
 	//  * https://www.mail-archive.com/linux-btrfs@vger.kernel.org/msg02875.html
-	switch sys := fileInfo.Sys().(type) {
-	case *syscall.Stat_t:
-		// First try finding by device number (works with most filesystems).
-		if mount, ok := info.mountNumbers[sys.Dev]; ok {
+
+	// First try finding by device number (works with most filesystems).
+	if mount, ok := info.mountNumbers[deviceId]; ok {
+		return mount
+	}
+	filePath = filepath.Clean(filePath)
+
+	// Now find the path that is the closest to the requested path.
+	for i := len(filePath) - 1; i >= 0; i-- {
+		if filePath[i] != '/' {
+			continue
+		}
+		// We've found a directory
+		if mount, ok := info.mountPaths[filePath[:i]]; ok {
 			return mount
 		}
-		filePath = filepath.Clean(filePath)
-
-		// Now find the path that is the closest to the requested path.
-		for i := len(filePath) - 1; i >= 0; i-- {
-			if filePath[i] != '/' {
-				continue
-			}
-			// We've found a directory
-			if mount, ok := info.mountPaths[filePath[:i]]; ok {
-				return mount
-			}
-		}
-
-		// We can't find the root: the FileInfo is probably just empty.
-		return nil
-
-	default:
-		return nil
 	}
+
+	// We can't find the root: the FileInfo is probably just empty.
+	return nil
 }
