@@ -230,3 +230,12 @@ func (info *Info) GetReal(filePath string, fileInfo os.FileInfo) *MountPoint {
 	// We can't find the root: the FileInfo is probably just empty.
 	return nil
 }
+
+// Return the device number for this mount point (the st_dev field for files on
+// it).
+func (p *MountPoint) DevNumber() (uint64, bool) {
+	if p == nil {
+		return 0, false
+	}
+	return p.devNumber, true
+}

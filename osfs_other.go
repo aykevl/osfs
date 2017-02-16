@@ -30,3 +30,7 @@ func Read() (*Info, error) {
 func (info *Info) GetReal(path string, fi os.FileInfo) *MountPoint {
 	return nil
 }
+
+func (p *MountPoint) DevNumber() (uint64, bool) {
+	return 0, false
+}
