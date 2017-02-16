@@ -215,7 +215,14 @@ func (info *Info) GetReal(filePath string, fileInfo os.FileInfo) *MountPoint {
 			continue
 		}
 		// We've found a directory
-		if mount, ok := info.mountPaths[filePath[:i]]; ok {
+
+		testPath := filePath[:i]
+		if (testPath == "") {
+			// Special-case the root directory
+			testPath = "/"
+		}
+
+		if mount, ok := info.mountPaths[testPath]; ok {
 			return mount
 		}
 	}
